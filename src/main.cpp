@@ -3,7 +3,7 @@
 
 int main()
 {
-    Window window(800, 600, "SFML Window");
+    Window window;
     window.run();
     return 0;
 }
