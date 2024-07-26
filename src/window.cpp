@@ -13,14 +13,12 @@ Window::Window()
 }
 
 // Wenn das Fenster läuft
-void Window::run() {
+void Window::run()
+{
     while (window.isOpen())
     {
-        while (window.isOpen())
-        {
-            ProcessEvents();
-            render();
-        }
+        ProcessEvents();
+        render();
     }
 }
 
@@ -31,7 +29,8 @@ void Window::clear()
 }
 
 // Rendert das Fenster
-void Window::render() {
+void Window::render()
+{
     clear();
     window.display();
 }
@@ -60,7 +59,7 @@ void Window::drawObjectsOnScreen()
 // Grid in background
 void Window::backgroundGrid()
 {
-    int gridSize = 100;
+    int gridSize = 10;
     sf::Vector2u windowSize = window.getSize(); // Dynamische abfrage für Fenstergröße
 
     gridCells.clear();
