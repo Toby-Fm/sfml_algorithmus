@@ -20,6 +20,11 @@
 #define WINDOW_HEIGHT 1400
 #define WINDOW_WIDTH 800
 
+enum class Key
+{
+    Escape
+};
+
 class Window {
 public:
     Window();
@@ -29,11 +34,11 @@ public:
     void destroy();
 
 private:
-    static void ProcessEvents();
+    void ProcessEvents();
     void drawObjectsOnScreen();
     void backgroundGrid();
+    void handlePlayerInput(sf::Keyboard::Key key, bool isPressed); // Key inputs
 
-private:
     sf::RenderWindow window;
     std::vector<sf::RectangleShape> gridCells;
     bool movingLeftCricle = false, movingRightCricle = false, movingUpCricle = false, movingDownCricle = false;
