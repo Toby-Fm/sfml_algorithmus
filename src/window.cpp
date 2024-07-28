@@ -3,6 +3,7 @@
 //
 
 #include "include/window.hpp"
+#include <string>
 #include <cmath>
 
 Window::Window()
@@ -25,7 +26,7 @@ void Window::run()
 // Löscht den Bildschirm
 void Window::clear()
 {
-    window.clear(sf::Color::Transparent);
+    window.clear(sf::Color::Black);
 }
 
 // Rendert das Fenster
@@ -62,12 +63,6 @@ void Window::ProcessEvents()
                 break;
             }
 
-            case sf::Event::Closed:
-            {
-                window.close();
-                break;
-            }
-
             default:
             {
                 break;
@@ -88,24 +83,52 @@ void Window::drawObjectsOnScreen()
 // Grid in background
 void Window::backgroundGrid()
 {
-    int gridSize = 10;
-    sf::Vector2u windowSize = window.getSize(); // Dynamische abfrage für Fenstergröße
+    sf::Vector2u windowSize = window.getSize();
+    int gridSize = 20;
+    int startX = 0; // Startposition X
+    int startY = 0; // Startposition Y
 
+    sf::Color lineColor = sf::Color::Blue;
     gridCells.clear();
 
-    for (int x = 0; x < windowSize.x; x += gridSize)
+    // Horizontale Linien
+    for (int y = startY; y < windowSize.y; y += gridSize)
     {
-        for (int y = 0; y < windowSize.y; y += gridSize)
-        {
-            sf::RectangleShape cell(sf::Vector2f(gridSize, gridSize));
-            cell.setPosition(x, y);
-            cell.setOutlineColor(sf::Color::White);
-            cell.setOutlineThickness(1);
-
-            gridCells.push_back(cell);
-        }
+        sf::RectangleShape line(sf::Vector2f(windowSize.x, 1));
+        line.setPosition(startX, y);
+        line.setFillColor(lineColor);
+        gridCells.push_back(line);
     }
+
+    /*
+     * Letzte Horizontale Linie hinzufügen
+     * Das grid geht normal über den Bildschirmrand, habe noch nicht verstanden warum, damit geht es aber auch...
+     */
+    sf::RectangleShape lastHorizontalLine(sf::Vector2f(windowSize.x, 1));
+    lastHorizontalLine.setPosition(startX, windowSize.y - 1);
+    lastHorizontalLine.setFillColor(lineColor);
+    gridCells.push_back(lastHorizontalLine);
+
+    // Vertikale Linien
+    for (int x = startX; x < windowSize.x; x += gridSize)
+    {
+        sf::RectangleShape line(sf::Vector2f(1, windowSize.y));
+        line.setPosition(x, startY);
+        line.setFillColor(lineColor);
+        gridCells.push_back(line);
+    }
+
+    /*
+     * Letzte vertikale Linie hinzufügen
+     * Das grid geht normal über den Bildschirmrand, habe noch nicht verstanden warum, damit geht es aber auch...
+     */
+    sf::RectangleShape lastVerticalLine(sf::Vector2f(1, windowSize.y));
+    lastVerticalLine.setPosition(windowSize.x - 1, startY);
+    lastVerticalLine.setFillColor(lineColor);
+    gridCells.push_back(lastVerticalLine);
 }
+
+
 
 void Window::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 {

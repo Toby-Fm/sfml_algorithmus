@@ -9,7 +9,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <string>
 #include <thread>
 #include <atomic>
 #include <mutex>
