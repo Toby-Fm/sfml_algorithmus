@@ -119,18 +119,19 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
 {
     switch (event.type)
     {
+        // Keyboard events (Ist Pressed or Not)
         case sf::Event::KeyPressed:
         case sf::Event::KeyReleased:
         {
             switch (event.key.code)
             {
-            case sf::Keyboard::Escape:
+                case sf::Keyboard::Escape:
                 {
                     if (isPressed)
                         destroy();
                     break;
                 }
-            default:
+                default:
                 {
                     break;
                 }
@@ -138,6 +139,7 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
             break;
         }
 
+        // Maus events (Ist Pressed or Not)
         case sf::Event::MouseButtonPressed:
         case sf::Event::MouseButtonReleased:
         {
@@ -155,9 +157,11 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
     }
 }
 
-void Window::drawMousePointer() {
+void Window::drawMousePointer()
+{
     // Überprüfen, ob die linke Maustaste gedrückt ist
-    if (!isLeftMouseButtonPressed) {
+    if (!isLeftMouseButtonPressed)
+    {
         return; // Wenn nicht gedrückt, nichts zeichnen
     }
 
@@ -172,9 +176,12 @@ void Window::drawMousePointer() {
     // Zeichnen des Mauszeigers im Fenster
     window.draw(mousePointer);
 
-    if (mousePosition.x < 0 || mousePosition.x > window.getSize().x || mousePosition.y < 0 || mousePosition.y > window.getSize().y) {
+    if (mousePosition.x < 0 || mousePosition.x > window.getSize().x || mousePosition.y < 0 || mousePosition.y > window.getSize().y)
+    {
         std::cout << "Maus ist außerhalb des Fensters!" << std::endl;
-    } else {
+    }
+    else
+    {
         // Ausgabe der aktuellen Mausposition, wenn sie innerhalb des Fensters ist
         std::cout << "X: " << mousePosition.x << " Y: " << mousePosition.y << std::endl;
 
@@ -182,7 +189,8 @@ void Window::drawMousePointer() {
         int numberOfLines = 4; // Anzahl der Linien
         float angleStep = 2 * 3.14159f / numberOfLines; // Schrittweite für den Winkel in Radians
 
-        for (int i = 0; i < numberOfLines; ++i) {
+        for (int i = 0; i < numberOfLines; ++i)
+        {
             // Berechnen des Winkels für die aktuelle Linie
             float angle = i * angleStep;
             // Berechnen der Richtungsvektoren der Linie (dx, dy) basierend auf dem Winkel
@@ -193,13 +201,15 @@ void Window::drawMousePointer() {
             float tMax = std::numeric_limits<float>::max();
 
             // Berechnen des maximalen t-Wertes für die x-Richtung
-            if (dx != 0) {
+            if (dx != 0)
+            {
                 float t1 = (0 - mousePosition.x) / dx;
                 float t2 = (window.getSize().x - mousePosition.x) / dx;
                 tMax = std::min(tMax, std::max(t1, t2));
             }
             // Berechnen des maximalen t-Wertes für die y-Richtung
-            if (dy != 0) {
+            if (dy != 0)
+            {
                 float t1 = (0 - mousePosition.y) / dy;
                 float t2 = (window.getSize().y - mousePosition.y) / dy;
                 tMax = std::min(tMax, std::max(t1, t2));
