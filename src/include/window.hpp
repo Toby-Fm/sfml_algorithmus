@@ -41,8 +41,6 @@ private:
 
     sf::RenderWindow window;
     std::vector<sf::RectangleShape> gridCells;
-    bool movingLeftCricle = false, movingRightCricle = false, movingUpCricle = false, movingDownCricle = false;
-    bool movingLeftRec = false, movingRightRec = false, movingUpRec = false, movingDownRec = false;
 };
 
 
