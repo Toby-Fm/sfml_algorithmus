@@ -8,6 +8,7 @@
 #define WINDOW_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Window.hpp>
 #include <iostream>
 #include <thread>
 #include <atomic>
@@ -19,10 +20,11 @@
 #define WINDOW_HEIGHT 1400
 #define WINDOW_WIDTH 800
 
-enum class Key
+enum class keyboardKey
 {
     Escape
 };
+
 
 class Window {
 public:
@@ -36,10 +38,13 @@ private:
     void ProcessEvents();
     void drawObjectsOnScreen();
     void backgroundGrid();
-    void handlePlayerInput(sf::Keyboard::Key key, bool isPressed); // Key inputs
+    void handlePlayerInput(sf::Event event, bool isPressed); // Key inputs
+
+    void drawMousePointer();
 
     sf::RenderWindow window;
     std::vector<sf::RectangleShape> gridCells;
+    bool isLeftMouseButtonPressed; // Status der linken Maustaste
 };
 
 
