@@ -7,6 +7,9 @@
 #include <string>
 #include <cmath>
 
+/*
+ * Konstruktor für das Window-Objekt, initialisiert das Fenster mit definierten Dimensionen und Eigenschaften.
+ */
 Window::Window() //: isLeftMouseButtonPressed(false)
 {
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Algorithmus", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
@@ -14,7 +17,9 @@ Window::Window() //: isLeftMouseButtonPressed(false)
     backgroundGrid();
 }
 
-// Wenn das Fenster läuft
+/*
+ * Hauptausführungsschleife des Fensters, behandelt Ereignisse und rendert die Szene.
+ */
 void Window::run()
 {
     while (window.isOpen())
@@ -27,13 +32,17 @@ void Window::run()
     }
 }
 
-// Löscht den Bildschirm
+/*
+ * Löscht den Bildschirm, um für das neue Rendering vorzubereiten.
+ */
 void Window::clear()
 {
     window.clear(sf::Color::Black);
 }
 
-// Rendert das Fenster
+/*
+ * Verantwortlich für das Zeichnen aller Objekte im Fenster.
+ */
 void Window::render()
 {
     clear();
@@ -42,13 +51,18 @@ void Window::render()
     window.display();
 }
 
-// Zerstört das Fenster
+/*
+ * Schließt das Fenster und beendet das Programm.
+ */
 void Window::destroy()
 {
     std::cout << "Fenster wird geschlossen" << std::endl;
     window.close();
 }
 
+/*
+ * Zeichnet das Grid, basierend auf dem aktuellen Zustand der gridMap.
+ */
 void Window::drawGridType()
 {
     for (int y = 0; y < gridMap.size(); ++y) {
@@ -66,7 +80,9 @@ void Window::drawGridType()
     }
 }
 
-
+/*
+ * Verarbeitet alle eingehenden Ereignisse und leitet entsprechende Aktionen ein.
+ */
 void Window::ProcessEvents()
 {
     sf::Event event{};
@@ -78,7 +94,9 @@ void Window::ProcessEvents()
 }
 
 
-// Objekte on Screen
+/*
+ * Zeichnet zusätzliche Objekte auf dem Bildschirm, die nicht Teil des Grids sind.
+ */
 void Window::drawObjectsOnScreen()
 {
     for (const auto& cell : gridCells)
@@ -89,7 +107,9 @@ void Window::drawObjectsOnScreen()
     drawMousePointer();
 }
 
-// Grid in background
+/*
+ * Erstellt das Hintergrundgitter des Fensters.
+ */
 void Window::backgroundGrid()
 {
     sf::Vector2u windowSize = window.getSize();
@@ -98,6 +118,7 @@ void Window::backgroundGrid()
     sf::Color lineColor = sf::Color::White;
     gridCells.clear();
 
+    // Horizontal
     for (float y = startY; y < windowSize.y; y += gridSize)
     {
         sf::RectangleShape line(sf::Vector2f(windowSize.x, 1));
@@ -134,6 +155,9 @@ void Window::backgroundGrid()
     gridCells.push_back(lastVerticalLine);
 }
 
+/*
+ * Behandelt die Eingaben der Spieler, sowohl von der Tastatur als auch von der Maus.
+ */
 void Window::handlePlayerInput(sf::Event event, bool isPressed)
 {
     switch (event.type)
@@ -159,26 +183,26 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
         }
 
         // Maus events (Ist Pressed or Not)
-        case sf::Event::MouseButtonPressed:
+        case sf::Event::MouseButtonPressed: // Maustaste ist gedrückt
         {
             if (event.mouseButton.button == sf::Mouse::Left)
             {
                 isLeftMouseButtonPressed = true;
             }
             if (event.mouseButton.button == sf::Mouse::Right) {
-                isRightMouseButtonPressed = true;  // Maustaste ist gedrückt
+                isRightMouseButtonPressed = true;
             }
             break;
         }
 
-        case sf::Event::MouseButtonReleased:
+        case sf::Event::MouseButtonReleased: // Maustaste ist losgelassen
         {
             if (event.mouseButton.button == sf::Mouse::Left)
             {
                 isLeftMouseButtonPressed = false;
             }
             if (event.mouseButton.button == sf::Mouse::Right) {
-                isRightMouseButtonPressed = false;  // Maustaste ist losgelassen
+                isRightMouseButtonPressed = false;
             }
             break;
         }
@@ -190,6 +214,9 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
     }
 }
 
+/*
+ * Zeichnet den Mauszeiger, wenn die linke Maustaste gedrückt ist.
+ */
 void Window::drawMousePointer()
 {
     // Überprüfen, ob die linke Maustaste gedrückt ist
@@ -263,6 +290,9 @@ void Window::drawMousePointer()
     }
 }
 
+/*
+ * Überprüft, ob die Maus innerhalb des Grids ist.
+ */
 void Window::checkMouseInGrid(sf::Vector2i mousePosition)
 {
     const int gridX = mousePosition.x / gridSize;
@@ -281,6 +311,10 @@ void Window::checkMouseInGrid(sf::Vector2i mousePosition)
         std::cout << "Maus außerhalb des Gitterbereichs!" << std::endl;
     }
 }
+
+/*
+ * Schaltet die Wand bei der aktuellen Mausposition um, wenn die rechte Maustaste gedrückt wird.
+ */
 void Window::toggleWallAtMousePosition(sf::Vector2i mousePosition)
 {
     int gridX = mousePosition.x / gridSize;
