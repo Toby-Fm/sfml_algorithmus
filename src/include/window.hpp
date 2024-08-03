@@ -25,6 +25,12 @@ enum class keyboardKey
     Escape
 };
 
+enum class gridType
+{
+    field,
+    wall
+};
+
 
 class Window {
 public:
@@ -41,10 +47,14 @@ private:
     void handlePlayerInput(sf::Event event, bool isPressed); // Key inputs
 
     void drawMousePointer();
+    void checkMouseInGrid(sf::Vector2i mousePosition);
+    void drawGridType();
 
     sf::RenderWindow window;
     std::vector<sf::RectangleShape> gridCells;
-    bool isLeftMouseButtonPressed; // Status der linken Maustaste
+    bool isLeftMouseButtonPressed{}; // Status der linken Maustaste
+    bool isRightMouseButtonPressed{}; // Status der linken Maustaste
+    int gridSize = 100;
 };
 
 

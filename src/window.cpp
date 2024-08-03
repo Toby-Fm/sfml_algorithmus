@@ -47,7 +47,7 @@ void Window::destroy()
 
 void Window::ProcessEvents()
 {
-    sf::Event event;
+    sf::Event event{};
     while (window.pollEvent(event))
     {
         bool isPressed = (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed);
@@ -71,14 +71,11 @@ void Window::drawObjectsOnScreen()
 void Window::backgroundGrid()
 {
     sf::Vector2u windowSize = window.getSize();
-    int gridSize = 50;
     float startX = 0; // Startposition X
     float startY = 0; // Startposition Y
-
     sf::Color lineColor = sf::Color::White;
     gridCells.clear();
 
-    // Horizontale Linien
     for (float y = startY; y < windowSize.y; y += gridSize)
     {
         sf::RectangleShape line(sf::Vector2f(windowSize.x, 1));
@@ -147,6 +144,10 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
             {
                 isLeftMouseButtonPressed = isPressed;
             }
+            if (event.mouseButton.button == sf::Mouse::Right)
+            {
+                isRightMouseButtonPressed = isPressed;
+            }
             break;
         }
 
@@ -167,6 +168,8 @@ void Window::drawMousePointer()
 
     // Holen der aktuellen Mausposition relativ zum Fenster
     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+    // Überprüfe, ob die Maus in einem Gitterfeld ist
+    checkMouseInGrid(mousePosition);
 
     // Erstellen eines Kreis-Shape-Objekts für den Mauszeiger mit Radius 5
     sf::CircleShape mousePointer(5.f);
@@ -228,3 +231,26 @@ void Window::drawMousePointer()
     }
 }
 
+void Window::checkMouseInGrid(sf::Vector2i mousePosition)
+{
+    int gridX = mousePosition.x / gridSize;
+    int gridY = mousePosition.y / gridSize;
+
+    sf::Vector2u windowSize = window.getSize();
+    int maxX = windowSize.x / gridSize;
+    int maxY = windowSize.y / gridSize;
+
+    if (gridX >= 0 && gridX < maxX && gridY >= 0 && gridY < maxY)
+    {
+        std::cout << "Die Maus ist innerhalb des Gitters bei Grid Position: " << gridX << ", " << gridY << std::endl;
+    }
+    else
+    {
+        std::cout << "Maus außerhalb des Gitterbereichs!" << std::endl;
+    }
+}
+
+void Window::drawGridType()
+{
+
+}
