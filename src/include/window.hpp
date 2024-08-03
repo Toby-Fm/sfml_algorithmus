@@ -17,8 +17,8 @@
 #include <cstdlib>
 #include <ctime>
 
-#define WINDOW_HEIGHT 1400
-#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 800
+#define WINDOW_WIDTH 1400
 
 enum class keyboardKey
 {
@@ -39,6 +39,7 @@ public:
     void clear();
     void render();
     void destroy();
+    void drawGridType();
 
 private:
     void ProcessEvents();
@@ -48,13 +49,14 @@ private:
 
     void drawMousePointer();
     void checkMouseInGrid(sf::Vector2i mousePosition);
-    void drawGridType();
+    void toggleWallAtMousePosition(sf::Vector2i mousePosition);
 
     sf::RenderWindow window;
+    std::vector<std::vector<gridType>> gridMap;
     std::vector<sf::RectangleShape> gridCells;
     bool isLeftMouseButtonPressed{}; // Status der linken Maustaste
     bool isRightMouseButtonPressed{}; // Status der linken Maustaste
-    int gridSize = 100;
+    const int gridSize = 100;
 };
 
 

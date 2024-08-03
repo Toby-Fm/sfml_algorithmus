@@ -9,8 +9,8 @@
 
 Window::Window() //: isLeftMouseButtonPressed(false)
 {
-    window.create(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "SFML Algorithmus", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
-    // Grid in den background zeichnen
+    window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Algorithmus", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
+    gridMap.resize(WINDOW_HEIGHT / gridSize, std::vector<gridType>(WINDOW_WIDTH / gridSize, gridType::field));
     backgroundGrid();
 }
 
@@ -20,6 +20,9 @@ void Window::run()
     while (window.isOpen())
     {
         ProcessEvents();
+        if (isRightMouseButtonPressed) {
+            toggleWallAtMousePosition(sf::Mouse::getPosition(window));
+        }
         render();
     }
 }
@@ -34,6 +37,7 @@ void Window::clear()
 void Window::render()
 {
     clear();
+    drawGridType();
     drawObjectsOnScreen();
     window.display();
 }
@@ -44,6 +48,24 @@ void Window::destroy()
     std::cout << "Fenster wird geschlossen" << std::endl;
     window.close();
 }
+
+void Window::drawGridType()
+{
+    for (int y = 0; y < gridMap.size(); ++y) {
+        for (int x = 0; x < gridMap[y].size(); ++x) {
+            sf::RectangleShape cell(sf::Vector2f(gridSize - 2, gridSize - 2)); // leichter Abstand für visuelle Trennung
+            cell.setPosition(x * gridSize + 1, y * gridSize + 1);
+
+            if (gridMap[y][x] == gridType::wall) {
+                cell.setFillColor(sf::Color::White);
+            } else {
+                cell.setFillColor(sf::Color::Transparent); // Änderung zu transparentem Hintergrund
+            }
+            window.draw(cell);
+        }
+    }
+}
+
 
 void Window::ProcessEvents()
 {
@@ -138,15 +160,25 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
 
         // Maus events (Ist Pressed or Not)
         case sf::Event::MouseButtonPressed:
+        {
+            if (event.mouseButton.button == sf::Mouse::Left)
+            {
+                isLeftMouseButtonPressed = true;
+            }
+            if (event.mouseButton.button == sf::Mouse::Right) {
+                isRightMouseButtonPressed = true;  // Maustaste ist gedrückt
+            }
+            break;
+        }
+
         case sf::Event::MouseButtonReleased:
         {
             if (event.mouseButton.button == sf::Mouse::Left)
             {
-                isLeftMouseButtonPressed = isPressed;
+                isLeftMouseButtonPressed = false;
             }
-            if (event.mouseButton.button == sf::Mouse::Right)
-            {
-                isRightMouseButtonPressed = isPressed;
+            if (event.mouseButton.button == sf::Mouse::Right) {
+                isRightMouseButtonPressed = false;  // Maustaste ist losgelassen
             }
             break;
         }
@@ -189,8 +221,8 @@ void Window::drawMousePointer()
         std::cout << "X: " << mousePosition.x << " Y: " << mousePosition.y << std::endl;
 
         // Zeichnen von Linien vom Mauszeiger aus in verschiedene Richtungen
-        int numberOfLines = 4; // Anzahl der Linien
-        float angleStep = 2 * 3.14159f / numberOfLines; // Schrittweite für den Winkel in Radians
+        constexpr int numberOfLines = 4; // Anzahl der Linien
+        constexpr float angleStep = 2 * 3.14159f / numberOfLines; // Schrittweite für den Winkel in Radians
 
         for (int i = 0; i < numberOfLines; ++i)
         {
@@ -233,12 +265,12 @@ void Window::drawMousePointer()
 
 void Window::checkMouseInGrid(sf::Vector2i mousePosition)
 {
-    int gridX = mousePosition.x / gridSize;
-    int gridY = mousePosition.y / gridSize;
+    const int gridX = mousePosition.x / gridSize;
+    const int gridY = mousePosition.y / gridSize;
 
     sf::Vector2u windowSize = window.getSize();
-    int maxX = windowSize.x / gridSize;
-    int maxY = windowSize.y / gridSize;
+    const unsigned int maxX = windowSize.x / gridSize;
+    const unsigned int maxY = windowSize.y / gridSize;
 
     if (gridX >= 0 && gridX < maxX && gridY >= 0 && gridY < maxY)
     {
@@ -249,8 +281,12 @@ void Window::checkMouseInGrid(sf::Vector2i mousePosition)
         std::cout << "Maus außerhalb des Gitterbereichs!" << std::endl;
     }
 }
-
-void Window::drawGridType()
+void Window::toggleWallAtMousePosition(sf::Vector2i mousePosition)
 {
+    int gridX = mousePosition.x / gridSize;
+    int gridY = mousePosition.y / gridSize;
 
+    if (gridX >= 0 && gridX < gridMap[0].size() && gridY >= 0 && gridY < gridMap.size()) {
+        gridMap[gridY][gridX] = gridType::wall; // Setze die Zelle auf Wall, wenn sie nicht bereits eine Wand ist
+    }
 }
