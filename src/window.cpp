@@ -4,8 +4,6 @@
 
 #include "include/window.hpp"
 #include <cmath>
-#include <string>
-#include <cmath>
 
 /*
  * Konstruktor für das Window-Objekt, initialisiert das Fenster mit definierten Dimensionen und Eigenschaften.
@@ -49,6 +47,7 @@ void Window::render()
     clear();
     drawGridType();
     drawObjectsOnScreen();
+    myButton.draw(window); // Zeichne den Button
     window.display();
 }
 
@@ -93,6 +92,7 @@ void Window::ProcessEvents()
     sf::Event event{};
     while (window.pollEvent(event))
     {
+        myButton.handleEvent(event, window); // Button Ereignisse verarbeiten
         bool isPressed = (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed);
         handlePlayerInput(event, isPressed);
     }

@@ -7,6 +7,8 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
+#include "button.hpp"
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Window.hpp>
 #include <iostream>
@@ -24,6 +26,11 @@
 #define GRID_WIDTH 1000
 #define GRID_SIZE 100
 
+#define BUTTON_X 1100
+#define BUTTON_Y 50
+#define BUTTON_WIDTH 200
+#define BUTTON_HEIGHT 50
+
 enum class keyboardKey
 {
     Escape, S, E, D
@@ -33,7 +40,6 @@ enum class gridType
 {
     field, wall, start, end
 };
-
 
 class Window {
 public:
@@ -56,6 +62,8 @@ private:
     void toggleGridTypeAtMousePosition(sf::Vector2i mousePosition, gridType type);
 
     sf::RenderWindow window;
+    Button myButton{BUTTON_X, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, sf::Color::Blue}; // Positionierung des Buttons
+
     std::vector<std::vector<gridType>> gridMap;
     std::vector<sf::RectangleShape> gridCells;
     bool isLeftMouseButtonPressed{}; // Status der linken Maustaste

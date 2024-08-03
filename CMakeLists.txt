@@ -10,6 +10,7 @@ find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 add_executable(sfml_algorithmus
         src/main.cpp
         src/window.cpp
+        src/button.cpp
 )
 
 # Include directories
