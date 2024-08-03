@@ -50,8 +50,9 @@ private:
     void backgroundGrid();
     void handlePlayerInput(sf::Event event, bool isPressed); // Key inputs
 
-    void drawMousePointer();
+    bool isMouseInGrid(sf::Vector2i mousePosition);
     void checkMouseInGrid(sf::Vector2i mousePosition);
+    void drawMousePointer();
     void toggleGridTypeAtMousePosition(sf::Vector2i mousePosition, gridType type);
 
     sf::RenderWindow window;
@@ -60,7 +61,5 @@ private:
     bool isLeftMouseButtonPressed{}; // Status der linken Maustaste
     bool isRightMouseButtonPressed{}; // Status der linken Maustaste
 };
-
-
 
 #endif //WINDOW_HPP

@@ -243,18 +243,35 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
 }
 
 /*
+ * Überprüft, ob die Maus innerhalb des Grids ist.
+ */
+bool Window::isMouseInGrid(sf::Vector2i mousePosition) {
+    int gridX = mousePosition.x / GRID_SIZE;
+    int gridY = mousePosition.y / GRID_SIZE;
+    return gridX >= 0 && gridX < (GRID_WIDTH / GRID_SIZE) && gridY >= 0 && gridY < (GRID_HEIGHT / GRID_SIZE);
+}
+
+void Window::checkMouseInGrid(sf::Vector2i mousePosition)
+{
+    if (isMouseInGrid(mousePosition)) {
+        std::cout << "Maus ist innerhalb des Gitters bei Position: " << mousePosition.x / GRID_SIZE << ", " << mousePosition.y / GRID_SIZE << std::endl;
+    } else {
+        std::cout << "Maus ist außerhalb des Gitterbereichs!" << std::endl;
+    }
+}
+
+/*
  * Zeichnet den Mauszeiger, wenn die linke Maustaste gedrückt ist.
  */
 void Window::drawMousePointer()
 {
+    // Holen der aktuellen Mausposition relativ zum Fenster
+    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
     // Überprüfen, ob die linke Maustaste gedrückt ist
-    if (!isLeftMouseButtonPressed)
+    if (!isLeftMouseButtonPressed || !isMouseInGrid(mousePosition))
     {
         return; // Wenn nicht gedrückt, nichts zeichnen
     }
-
-    // Holen der aktuellen Mausposition relativ zum Fenster
-    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
     // Überprüfe, ob die Maus in einem Gitterfeld ist
     checkMouseInGrid(mousePosition);
 
@@ -319,37 +336,16 @@ void Window::drawMousePointer()
 }
 
 /*
- * Überprüft, ob die Maus innerhalb des Grids ist.
- */
-void Window::checkMouseInGrid(sf::Vector2i mousePosition)
-{
-    const int gridX = mousePosition.x / GRID_SIZE;
-    const int gridY = mousePosition.y / GRID_SIZE;
-
-    sf::Vector2u windowSize = window.getSize();
-    const unsigned int maxX = windowSize.x / GRID_SIZE;
-    const unsigned int maxY = windowSize.y / GRID_SIZE;
-
-    if (gridX >= 0 && gridX < maxX && gridY >= 0 && gridY < maxY)
-    {
-        std::cout << "Die Maus ist innerhalb des Gitters bei Grid Position: " << gridX << ", " << gridY << std::endl;
-    }
-    else
-    {
-        std::cout << "Maus außerhalb des Gitterbereichs!" << std::endl;
-    }
-}
-
-/*
  * Schaltet GridType bei drücken einer bestimmten taste
  */
 void Window::toggleGridTypeAtMousePosition(sf::Vector2i mousePosition, gridType type)
 {
-    int gridX = mousePosition.x / GRID_SIZE;
-    int gridY = mousePosition.y / GRID_SIZE;
-
-    if (gridX >= 0 && gridX < gridMap[0].size() && gridY >= 0 && gridY < gridMap.size())
+    if (isMouseInGrid(mousePosition))
     {
-        gridMap[gridY][gridX] = type; // Setze die Zelle basierend auf dem übergebenen Typ
+        int gridX = mousePosition.x / GRID_SIZE;
+        int gridY = mousePosition.y / GRID_SIZE;
+        if (gridMap.size() > gridY && gridMap[gridY].size() > gridX) {
+            gridMap[gridY][gridX] = type;
+        }
     }
 }
