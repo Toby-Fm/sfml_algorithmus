@@ -25,8 +25,9 @@ void Window::run()
     while (window.isOpen())
     {
         ProcessEvents();
+        // Rufe die Funktion mit 'wall' auf beim dauerhaften klicken
         if (isRightMouseButtonPressed) {
-            toggleWallAtMousePosition(sf::Mouse::getPosition(window));
+            toggleGridTypeAtMousePosition(sf::Mouse::getPosition(window), gridType::wall);
         }
         render();
     }
@@ -70,9 +71,13 @@ void Window::drawGridType()
             sf::RectangleShape cell(sf::Vector2f(gridSize - 2, gridSize - 2)); // leichter Abstand für visuelle Trennung
             cell.setPosition(x * gridSize + 1, y * gridSize + 1);
 
-            if (gridMap[y][x] == gridType::wall) {
+            if (gridMap[y][x] == gridType::wall) { // Wand
                 cell.setFillColor(sf::Color::White);
-            } else {
+            } else if(gridMap[y][x] == gridType::start) { // Startpunkt
+                cell.setFillColor(sf::Color::Green);
+            } else if(gridMap[y][x] == gridType::end) { // Endpunkt
+                cell.setFillColor(sf::Color::Red);
+            } else if(gridMap[y][x] == gridType::field) { // Normales feld
                 cell.setFillColor(sf::Color::Transparent); // Änderung zu transparentem Hintergrund
             }
             window.draw(cell);
@@ -164,10 +169,36 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
     {
         // Keyboard events (Ist Pressed or Not)
         case sf::Event::KeyPressed:
-        case sf::Event::KeyReleased:
         {
             switch (event.key.code)
             {
+                case sf::Keyboard::S:
+                {
+                    if(isPressed)
+                    {
+                        // Rufe die Funktion mit 'start' auf beim einmaligen klicken
+                        toggleGridTypeAtMousePosition(sf::Mouse::getPosition(window), gridType::start);
+                    }
+                    break;
+                }
+                case sf::Keyboard::E:
+                {
+                    if(isPressed)
+                    {
+                        // Rufe die Funktion mit 'end' auf beim einmaligen klicken
+                        toggleGridTypeAtMousePosition(sf::Mouse::getPosition(window), gridType::end);
+                    }
+                    break;
+                }
+                case sf::Keyboard::D:
+                {
+                    if(isPressed)
+                    {
+                        // Rufe die Funktion mit 'field' auf beim einmaligen klicken
+                        toggleGridTypeAtMousePosition(sf::Mouse::getPosition(window), gridType::field);
+                    }
+                    break;
+                }
                 case sf::Keyboard::Escape:
                 {
                     if (isPressed)
@@ -181,7 +212,6 @@ void Window::handlePlayerInput(sf::Event event, bool isPressed)
             }
             break;
         }
-
         // Maus events (Ist Pressed or Not)
         case sf::Event::MouseButtonPressed: // Maustaste ist gedrückt
         {
@@ -315,12 +345,13 @@ void Window::checkMouseInGrid(sf::Vector2i mousePosition)
 /*
  * Schaltet die Wand bei der aktuellen Mausposition um, wenn die rechte Maustaste gedrückt wird.
  */
-void Window::toggleWallAtMousePosition(sf::Vector2i mousePosition)
+void Window::toggleGridTypeAtMousePosition(sf::Vector2i mousePosition, gridType type)
 {
     int gridX = mousePosition.x / gridSize;
     int gridY = mousePosition.y / gridSize;
 
-    if (gridX >= 0 && gridX < gridMap[0].size() && gridY >= 0 && gridY < gridMap.size()) {
-        gridMap[gridY][gridX] = gridType::wall; // Setze die Zelle auf Wall, wenn sie nicht bereits eine Wand ist
+    if (gridX >= 0 && gridX < gridMap[0].size() && gridY >= 0 && gridY < gridMap.size())
+    {
+        gridMap[gridY][gridX] = type; // Setze die Zelle basierend auf dem übergebenen Typ
     }
 }

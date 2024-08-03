@@ -22,13 +22,15 @@
 
 enum class keyboardKey
 {
-    Escape
+    Escape, S, E, D
 };
 
 enum class gridType
 {
     field,
-    wall
+    wall,
+    start,
+    end
 };
 
 
@@ -49,7 +51,7 @@ private:
 
     void drawMousePointer();
     void checkMouseInGrid(sf::Vector2i mousePosition);
-    void toggleWallAtMousePosition(sf::Vector2i mousePosition);
+    void toggleGridTypeAtMousePosition(sf::Vector2i mousePosition, gridType type);
 
     sf::RenderWindow window;
     std::vector<std::vector<gridType>> gridMap;
