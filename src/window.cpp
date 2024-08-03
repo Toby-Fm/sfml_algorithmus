@@ -13,7 +13,7 @@
 Window::Window() //: isLeftMouseButtonPressed(false)
 {
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Algorithmus", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
-    gridMap.resize(WINDOW_HEIGHT / gridSize, std::vector<gridType>(WINDOW_WIDTH / gridSize, gridType::field));
+    gridMap.resize(WINDOW_HEIGHT / GRID_SIZE, std::vector<gridType>(WINDOW_WIDTH / GRID_SIZE, gridType::field));
     backgroundGrid();
 }
 
@@ -68,8 +68,8 @@ void Window::drawGridType()
 {
     for (int y = 0; y < gridMap.size(); ++y) {
         for (int x = 0; x < gridMap[y].size(); ++x) {
-            sf::RectangleShape cell(sf::Vector2f(gridSize - 2, gridSize - 2)); // leichter Abstand für visuelle Trennung
-            cell.setPosition(x * gridSize + 1, y * gridSize + 1);
+            sf::RectangleShape cell(sf::Vector2f(GRID_SIZE - 2, GRID_SIZE - 2)); // leichter Abstand für visuelle Trennung
+            cell.setPosition(x * GRID_SIZE + 1, y * GRID_SIZE + 1);
 
             if (gridMap[y][x] == gridType::wall) { // Wand
                 cell.setFillColor(sf::Color::White);
@@ -124,40 +124,38 @@ void Window::backgroundGrid()
     gridCells.clear();
 
     // Horizontal
-    for (float y = startY; y < windowSize.y; y += gridSize)
+    for (float y = startY; y <= GRID_HEIGHT; y += GRID_SIZE)
     {
-        sf::RectangleShape line(sf::Vector2f(windowSize.x, 1));
+        sf::RectangleShape line(sf::Vector2f(GRID_WIDTH, 1)); // Beschränkt die Länge auf GRID_WIDTH
         line.setPosition(startX, y);
         line.setFillColor(lineColor);
         gridCells.push_back(line);
     }
 
-    /*
-     * Letzte Horizontale Linie hinzufügen
-     * Das grid geht normal über den Bildschirmrand, habe noch nicht verstanden warum, damit geht es aber auch...
-     */
-    sf::RectangleShape lastHorizontalLine(sf::Vector2f(windowSize.x, 1));
-    lastHorizontalLine.setPosition(startX, windowSize.y - 1);
-    lastHorizontalLine.setFillColor(lineColor);
-    gridCells.push_back(lastHorizontalLine);
+    // Letzte horizontale Linie nur hinzufügen, wenn sie innerhalb der GRID_HEIGHT ist
+    if constexpr (GRID_HEIGHT % GRID_SIZE != 0) {
+        sf::RectangleShape lastHorizontalLine(sf::Vector2f(GRID_WIDTH, 1));
+        lastHorizontalLine.setPosition(startX, GRID_HEIGHT - 1);
+        lastHorizontalLine.setFillColor(lineColor);
+        gridCells.push_back(lastHorizontalLine);
+    }
 
     // Vertikale Linien
-    for (float x = startX; x < windowSize.x; x += gridSize)
+    for (float x = startX; x <= GRID_WIDTH; x += GRID_SIZE)
     {
-        sf::RectangleShape line(sf::Vector2f(1, windowSize.y));
+        sf::RectangleShape line(sf::Vector2f(1, GRID_HEIGHT)); // Beschränkt die Höhe auf GRID_HEIGHT
         line.setPosition(x, startY);
         line.setFillColor(lineColor);
         gridCells.push_back(line);
     }
 
-    /*
-     * Letzte vertikale Linie hinzufügen
-     * Das grid geht normal über den Bildschirmrand, habe noch nicht verstanden warum, damit geht es aber auch...
-     */
-    sf::RectangleShape lastVerticalLine(sf::Vector2f(1, windowSize.y));
-    lastVerticalLine.setPosition(windowSize.x - 1, startY);
-    lastVerticalLine.setFillColor(lineColor);
-    gridCells.push_back(lastVerticalLine);
+    // Letzte vertikale Linie nur hinzufügen, wenn sie innerhalb der GRID_WIDTH ist
+    if constexpr (GRID_WIDTH % GRID_SIZE != 0) {
+        sf::RectangleShape lastVerticalLine(sf::Vector2f(1, GRID_HEIGHT));
+        lastVerticalLine.setPosition(GRID_WIDTH - 1, startY);
+        lastVerticalLine.setFillColor(lineColor);
+        gridCells.push_back(lastVerticalLine);
+    }
 }
 
 /*
@@ -325,12 +323,12 @@ void Window::drawMousePointer()
  */
 void Window::checkMouseInGrid(sf::Vector2i mousePosition)
 {
-    const int gridX = mousePosition.x / gridSize;
-    const int gridY = mousePosition.y / gridSize;
+    const int gridX = mousePosition.x / GRID_SIZE;
+    const int gridY = mousePosition.y / GRID_SIZE;
 
     sf::Vector2u windowSize = window.getSize();
-    const unsigned int maxX = windowSize.x / gridSize;
-    const unsigned int maxY = windowSize.y / gridSize;
+    const unsigned int maxX = windowSize.x / GRID_SIZE;
+    const unsigned int maxY = windowSize.y / GRID_SIZE;
 
     if (gridX >= 0 && gridX < maxX && gridY >= 0 && gridY < maxY)
     {
@@ -343,12 +341,12 @@ void Window::checkMouseInGrid(sf::Vector2i mousePosition)
 }
 
 /*
- * Schaltet die Wand bei der aktuellen Mausposition um, wenn die rechte Maustaste gedrückt wird.
+ * Schaltet GridType bei drücken einer bestimmten taste
  */
 void Window::toggleGridTypeAtMousePosition(sf::Vector2i mousePosition, gridType type)
 {
-    int gridX = mousePosition.x / gridSize;
-    int gridY = mousePosition.y / gridSize;
+    int gridX = mousePosition.x / GRID_SIZE;
+    int gridY = mousePosition.y / GRID_SIZE;
 
     if (gridX >= 0 && gridX < gridMap[0].size() && gridY >= 0 && gridY < gridMap.size())
     {

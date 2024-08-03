@@ -20,6 +20,10 @@
 #define WINDOW_HEIGHT 800
 #define WINDOW_WIDTH 1400
 
+#define GRID_HEIGHT 700
+#define GRID_WIDTH 1000
+#define GRID_SIZE 100
+
 enum class keyboardKey
 {
     Escape, S, E, D
@@ -27,10 +31,7 @@ enum class keyboardKey
 
 enum class gridType
 {
-    field,
-    wall,
-    start,
-    end
+    field, wall, start, end
 };
 
 
@@ -58,7 +59,6 @@ private:
     std::vector<sf::RectangleShape> gridCells;
     bool isLeftMouseButtonPressed{}; // Status der linken Maustaste
     bool isRightMouseButtonPressed{}; // Status der linken Maustaste
-    const int gridSize = 100;
 };
 
 
