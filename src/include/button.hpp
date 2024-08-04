@@ -6,22 +6,21 @@
 #define BUTTON_HPP
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Window/Window.hpp>
-#include <iostream>
+#include <functional>
 
 // Einführung der Button Klasse
 class Button {
 public:
-    Button(float x, float y, float width, float height, sf::Color color)
-    : bounds(x, y, width, height), fillColor(color), isPressed(false) {}
+    Button(float x, float y, float width, float height, sf::Color color, std::function<void()> onClick)
+    : bounds(x, y, width, height), fillColor(color), isPressed(false), onClick(onClick) {}
 
     void draw(sf::RenderWindow& window);
     void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
-
 private:
     sf::FloatRect bounds;
     sf::Color fillColor;
     bool isPressed;
+    std::function<void()> onClick; // Callback-Funktion für den Klick
 };
 
 

@@ -3,15 +3,19 @@
 //
 
 #include "button.hpp"
+#include <iostream>
 
-void Button::draw(sf::RenderWindow& window) {
+
+void Button::draw(sf::RenderWindow& window)
+{
     sf::RectangleShape buttonShape(sf::Vector2f(bounds.width, bounds.height));
     buttonShape.setPosition(bounds.left, bounds.top);
     buttonShape.setFillColor(isPressed ? sf::Color::Red : fillColor);
     window.draw(buttonShape);
 }
 
-void Button::handleEvent(const sf::Event& event, const sf::RenderWindow& window) {
+void Button::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
+{
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         auto mousePos = sf::Mouse::getPosition(window);
         if (bounds.contains(mousePos.x, mousePos.y)) {
@@ -23,7 +27,9 @@ void Button::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
         if (bounds.contains(mousePos.x, mousePos.y) && isPressed) {
             isPressed = false;
             std::cout << "Button clicked!" << std::endl;
-            // Merke: Aktion hier ausführen
+            if (onClick) { // Überprüfen, ob eine Callback-Funktion vorhanden ist
+                onClick(); // Aktion hier ausführen
+            }
         }
     }
 }
