@@ -3,15 +3,23 @@
 //
 
 #include "include/window.hpp"
+
+#include <iostream>
 #include <cmath>
+#include <queue>
+#include <vector>
+#include <thread>
+#include <chrono> // For adding delays
 
 /*
  * Konstruktor für das Window-Objekt, initialisiert das Fenster mit definierten Dimensionen und Eigenschaften.
  */
-Window::Window() //: isLeftMouseButtonPressed(false)
+Window::Window()
+: myButton(BUTTON_X, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, sf::Color::Blue, [this]() { this->breadthFirstSearch(); }),
+  myVisualButton(BUTTON_X, BUTTON2_Y, BUTTON_WIDTH, BUTTON_HEIGHT, sf::Color::Green, [this]() { this->visualBreadthFirstSearch(); })
 {
     window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Algorithmus", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
-    gridMap.resize(WINDOW_HEIGHT / GRID_SIZE, std::vector<gridType>(WINDOW_WIDTH / GRID_SIZE, gridType::field));
+    gridMap.resize(GRID_HEIGHT / GRID_SIZE, std::vector<gridType>(GRID_WIDTH / GRID_SIZE, gridType::field));
     backgroundGrid();
 }
 
@@ -48,6 +56,7 @@ void Window::render()
     drawGridType();
     drawObjectsOnScreen();
     myButton.draw(window); // Zeichne den Button
+    myVisualButton.draw(window); // Zeichne den Visual Button
     window.display();
 }
 
@@ -77,7 +86,9 @@ void Window::drawGridType()
             } else if(gridMap[y][x] == gridType::end) { // Endpunkt
                 cell.setFillColor(sf::Color::Red);
             } else if(gridMap[y][x] == gridType::field) { // Normales feld
-                cell.setFillColor(sf::Color::Transparent); // Änderung zu transparentem Hintergrund
+                cell.setFillColor(sf::Color::Black); // Änderung zu transparentem Hintergrund
+            } else if(gridMap[y][x] == gridType::path) {
+                cell.setFillColor(sf::Color::Cyan);
             }
             window.draw(cell);
         }
@@ -87,14 +98,19 @@ void Window::drawGridType()
 /*
  * Verarbeitet alle eingehenden Ereignisse und leitet entsprechende Aktionen ein.
  */
-void Window::ProcessEvents()
-{
-    sf::Event event{};
-    while (window.pollEvent(event))
-    {
-        myButton.handleEvent(event, window); // Button Ereignisse verarbeiten
-        bool isPressed = (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed);
-        handlePlayerInput(event, isPressed);
+void Window::ProcessEvents() {
+    sf::Event event;
+    while (window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
+            window.close();
+        } else if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Escape) {
+                window.close();
+            }
+        }
+        myButton.handleEvent(event, window);
+        myVisualButton.handleEvent(event, window);
+        handlePlayerInput(event, (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed));
     }
 }
 
@@ -117,10 +133,9 @@ void Window::drawObjectsOnScreen()
  */
 void Window::backgroundGrid()
 {
-    sf::Vector2u windowSize = window.getSize();
     float startX = 0; // Startposition X
     float startY = 0; // Startposition Y
-    sf::Color lineColor = sf::Color::White;
+    sf::Color lineColor = sf::Color::Blue;
     gridCells.clear();
 
     // Horizontal
@@ -132,14 +147,6 @@ void Window::backgroundGrid()
         gridCells.push_back(line);
     }
 
-    // Letzte horizontale Linie nur hinzufügen, wenn sie innerhalb der GRID_HEIGHT ist
-    if constexpr (GRID_HEIGHT % GRID_SIZE != 0) {
-        sf::RectangleShape lastHorizontalLine(sf::Vector2f(GRID_WIDTH, 1));
-        lastHorizontalLine.setPosition(startX, GRID_HEIGHT - 1);
-        lastHorizontalLine.setFillColor(lineColor);
-        gridCells.push_back(lastHorizontalLine);
-    }
-
     // Vertikale Linien
     for (float x = startX; x <= GRID_WIDTH; x += GRID_SIZE)
     {
@@ -147,14 +154,6 @@ void Window::backgroundGrid()
         line.setPosition(x, startY);
         line.setFillColor(lineColor);
         gridCells.push_back(line);
-    }
-
-    // Letzte vertikale Linie nur hinzufügen, wenn sie innerhalb der GRID_WIDTH ist
-    if constexpr (GRID_WIDTH % GRID_SIZE != 0) {
-        sf::RectangleShape lastVerticalLine(sf::Vector2f(1, GRID_HEIGHT));
-        lastVerticalLine.setPosition(GRID_WIDTH - 1, startY);
-        lastVerticalLine.setFillColor(lineColor);
-        gridCells.push_back(lastVerticalLine);
     }
 }
 
@@ -349,3 +348,147 @@ void Window::toggleGridTypeAtMousePosition(sf::Vector2i mousePosition, gridType 
         }
     }
 }
+
+void Window::reconstructPath(const std::vector<std::vector<sf::Vector2i>>& predecessors, sf::Vector2i start, sf::Vector2i end) {
+    sf::Vector2i step = end;
+    while (step != start) {
+        gridMap[step.y][step.x] = gridType::path; // Zeichne den Pfad
+        step = predecessors[step.y][step.x];
+        render();
+        window.display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Visualisiere jeden Schritt der Pfadrekonstruktion
+    }
+}
+
+void Window::breadthFirstSearch() {
+    sf::Vector2i start(-1, -1);
+    sf::Vector2i end(-1, -1);
+
+    for (int y = 0; y < gridMap.size(); ++y) {
+        for (int x = 0; x < gridMap[y].size(); ++x) {
+            if (gridMap[y][x] == gridType::start) {
+                start = {x, y};
+            } else if (gridMap[y][x] == gridType::end) {
+                end = {x, y};
+            }
+        }
+    }
+
+    if (start.x == -1 || end.x == -1) {
+        std::cerr << "Start oder End Punkt wurde nicht gesetzt." << std::endl;
+        return;
+    }
+
+    std::vector<std::vector<bool>> visited(gridMap.size(), std::vector<bool>(gridMap[0].size(), false));
+    std::vector<std::vector<sf::Vector2i>> predecessors(gridMap.size(), std::vector<sf::Vector2i>(gridMap[0].size(), {-1, -1}));
+    std::queue<sf::Vector2i> queue;
+    queue.push(start);
+    visited[start.y][start.x] = true;
+
+    std::vector<sf::Vector2i> directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    bool found = false;
+
+    while (!queue.empty() && !found) {
+        sf::Vector2i current = queue.front();
+        queue.pop();
+
+        for (const auto& dir : directions) {
+            sf::Vector2i neighbor = {current.x + dir.x, current.y + dir.y};
+
+            if (neighbor.x >= 0 && neighbor.x < gridMap[0].size() &&
+                neighbor.y >= 0 && neighbor.y < gridMap.size() &&
+                !visited[neighbor.y][neighbor.x] &&
+                (gridMap[neighbor.y][neighbor.x] == gridType::field || gridMap[neighbor.y][neighbor.x] == gridType::end)) {
+
+                visited[neighbor.y][neighbor.x] = true;
+                predecessors[neighbor.y][neighbor.x] = current;
+                queue.push(neighbor);
+
+                if (gridMap[neighbor.y][neighbor.x] == gridType::end) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (found) {
+        sf::Vector2i step = end;
+        while (step != start) {
+            gridMap[step.y][step.x] = gridType::path;
+            step = predecessors[step.y][step.x];
+        }
+    } else {
+        std::cerr << "Kein Pfad gefunden." << std::endl;
+    }
+}
+
+void Window::visualBreadthFirstSearch() {
+    sf::Vector2i start(-1, -1);
+    sf::Vector2i end(-1, -1);
+
+    // Finde Start- und Endpunkte
+    for (int y = 0; y < gridMap.size(); ++y) {
+        for (int x = 0; x < gridMap[y].size(); ++x) {
+            if (gridMap[y][x] == gridType::start) {
+                start = {x, y};
+            } else if (gridMap[y][x] == gridType::end) {
+                end = {x, y};
+            }
+        }
+    }
+
+    if (start.x == -1 || end.x == -1) {
+        std::cerr << "Start oder Endpunkt nicht gesetzt." << std::endl;
+        return;
+    }
+
+    std::vector<std::vector<bool>> visited(gridMap.size(), std::vector<bool>(gridMap[0].size(), false));
+    std::queue<sf::Vector2i> queue;
+    queue.push(start);
+    visited[start.y][start.x] = true;
+    gridMap[start.y][start.x] = gridType::path; // Markiere den Startpunkt auf dem Grid
+    render();
+    window.display();
+
+    bool found = false;
+    std::vector<sf::Vector2i> directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+    while (!queue.empty() && !found) {
+        sf::Vector2i current = queue.front();
+        queue.pop();
+
+        if (current == end) {
+            found = true; // Endpunkt erreicht
+            break;
+        }
+
+        for (const auto& dir : directions) {
+            sf::Vector2i neighbor = {current.x + dir.x, current.y + dir.y};
+
+            if (neighbor.x >= 0 && neighbor.x < gridMap[0].size() && neighbor.y >= 0 && neighbor.y < gridMap.size()) {
+                if (!visited[neighbor.y][neighbor.x] && (gridMap[neighbor.y][neighbor.x] == gridType::field || neighbor == end)) {
+                    visited[neighbor.y][neighbor.x] = true;
+                    gridMap[neighbor.y][neighbor.x] = gridType::path;
+                    queue.push(neighbor);
+                    render();
+                    window.display();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+                    if (neighbor == end) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if (found) {
+        std::cout << "Endpunkt erreicht." << std::endl;
+    } else {
+        std::cout << "Kein Pfad zum Endpunkt gefunden." << std::endl;
+    }
+}
+
+

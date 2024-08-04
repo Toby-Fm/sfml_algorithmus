@@ -8,28 +8,22 @@
 #define WINDOW_HPP
 
 #include "button.hpp"
-
 #include <SFML/Graphics.hpp>
-#include <SFML/Window/Window.hpp>
-#include <iostream>
-#include <thread>
-#include <atomic>
-#include <mutex>
-#include <deque>
-#include <cstdlib>
-#include <ctime>
+#include <vector>
 
 #define WINDOW_HEIGHT 800
 #define WINDOW_WIDTH 1400
 
 #define GRID_HEIGHT 700
 #define GRID_WIDTH 1000
-#define GRID_SIZE 100
+#define GRID_SIZE 90
 
 #define BUTTON_X 1100
 #define BUTTON_Y 50
 #define BUTTON_WIDTH 200
 #define BUTTON_HEIGHT 50
+
+#define BUTTON2_Y 150 // Y position for the second button
 
 enum class keyboardKey
 {
@@ -38,7 +32,7 @@ enum class keyboardKey
 
 enum class gridType
 {
-    field, wall, start, end
+    field, wall, start, end, path
 };
 
 class Window {
@@ -56,18 +50,25 @@ private:
     void backgroundGrid();
     void handlePlayerInput(sf::Event event, bool isPressed); // Key inputs
 
-    bool isMouseInGrid(sf::Vector2i mousePosition);
-    void checkMouseInGrid(sf::Vector2i mousePosition);
+    static bool isMouseInGrid(sf::Vector2i mousePosition);
+    static void checkMouseInGrid(sf::Vector2i mousePosition);
     void drawMousePointer();
     void toggleGridTypeAtMousePosition(sf::Vector2i mousePosition, gridType type);
+    void reconstructPath(const std::vector<std::vector<sf::Vector2i>>& predecessors, sf::Vector2i start, sf::Vector2i end);
 
     sf::RenderWindow window;
-    Button myButton{BUTTON_X, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, sf::Color::Blue}; // Positionierung des Buttons
+    Button myButton; // Button for instant BFS
+    Button myVisualButton; // Button for visual BFS
 
     std::vector<std::vector<gridType>> gridMap;
     std::vector<sf::RectangleShape> gridCells;
     bool isLeftMouseButtonPressed{}; // Status der linken Maustaste
     bool isRightMouseButtonPressed{}; // Status der linken Maustaste
+
+    void breadthFirstSearch();
+    void visualBreadthFirstSearch();
+
+    std::vector<std::vector<sf::Vector2i>> predecessors; // Für Pfadrekonstruktion
 };
 
 #endif //WINDOW_HPP
