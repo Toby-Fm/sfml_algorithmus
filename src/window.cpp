@@ -442,7 +442,7 @@ void Window::visualBreadthFirstSearch() {
         std::cerr << "Start oder Endpunkt nicht gesetzt." << std::endl;
         return;
     }
-
+    
     std::vector<std::vector<bool>> visited(gridMap.size(), std::vector<bool>(gridMap[0].size(), false));
     std::queue<sf::Vector2i> queue;
     queue.push(start);

@@ -16,7 +16,7 @@
 
 #define GRID_HEIGHT 700
 #define GRID_WIDTH 1000
-#define GRID_SIZE 90
+#define GRID_SIZE 20
 
 #define BUTTON_X 1100
 #define BUTTON_Y 50

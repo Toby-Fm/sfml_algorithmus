@@ -1,0 +1,84 @@
+85%  fn
+  <- 96%  fn < get < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+  <-  2%  match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+  <-  1%  for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+  <-  1%  apply_directives < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 3%  (for generator)
+  <- 100%  fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 2%  handler
+  <- 98%  fn < match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+  <-  2%  fn < apply_directives < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 1%  extract_highlights
+  <- 100%  internal_render < perf.lua:7
+ 1%  apply
+  <- 100%  internal_render < perf.lua:7
+ 1%  text.lua:19
+  <- 100%  tbl_map < extract_highlights < internal_render < perf.lua:7
+ 1%  str_to_visible_codepoints
+  <- 100%  gen < internal_render < perf.lua:7
+ 1%  tbl_contains
+  <- 59%  handler < fn < match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render
+  <- 41%  extract_highlights < internal_render < perf.lua:7
+ 1%  match_preds
+  <- 100%  (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 1%  pack_len
+  <- 67%  apply_directives < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+  <- 33%  match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 1%  get_node_text
+  <- 100%  handler < fn < match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render
+ 1%  upper_bound
+  <- 100%  byte_index_to_utf8_index < char_idx_to_codepoint_idx < extract_highlights < internal_render < perf.lua:7
+ 0%  most_commons
+  <- 100%  extract_highlights < internal_render < perf.lua:7
+ 0%  util.lua:29
+  <- 100%  internal_render < perf.lua:7
+ 0%  tbl_map
+  <- 100%  extract_highlights < internal_render < perf.lua:7
+ 0%  get_vim_range
+  <- 100%  fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 0%  byte_index_to_utf8_index
+  <- 100%  char_idx_to_codepoint_idx < extract_highlights < internal_render < perf.lua:7
+ 0%  hash
+  <- 60%  apply_directives < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+  <- 40%  match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 0%  _editor.lua:0
+  <- 100%  pcall < str_to_visible_codepoints < gen < internal_render < perf.lua:7
+ 0%  
+  <- 40%  validate < tbl_contains < handler < fn < match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights
+  <- 40%  validate < tbl_contains < extract_highlights < internal_render < perf.lua:7
+  <- 20%   < __index < cache_folds < internal_render < perf.lua:7
+ 0%  gen
+  <- 100%  internal_render < perf.lua:7
+ 0%  get_files
+  <- 50%  fn < get < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+  <- 50%  get_files < fn < get < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 0%  get_range
+  <- 100%  get_node_text < handler < fn < match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights
+ 0%  char_idx_to_codepoint_idx
+  <- 100%  extract_highlights < internal_render < perf.lua:7
+ 0%  validate
+  <- 67%  tbl_contains < handler < fn < match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights
+  <- 33%  list_extend < get_files < get_files < fn < get < fn < for_each_tree < get_buffer_highlights < extract_highlights
+ 0%  fold.lua:12
+  <- 100%  nvim_buf_call < get_all_folds < cache_folds < internal_render < perf.lua:7
+ 0%  apply_directives
+  <- 100%  (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 0%  is_fullwidth
+  <- 50%  str_to_visible_codepoints < gen < internal_render < perf.lua:7
+  <- 50%  text.lua:19 < tbl_map < extract_highlights < internal_render < perf.lua:7
+ 0%  internal_render
+  <- 100%  perf.lua:7
+ 0%  init.lua:256
+  <- 100%  nvim_exec_autocmds < internal_render < perf.lua:7
+ 0%  is_combining_character
+  <- 100%  text.lua:19 < tbl_map < extract_highlights < internal_render < perf.lua:7
+ 0%  __index
+  <- 100%  internal_render < perf.lua:7
+ 0%  xor
+  <- 100%  fn < match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 0%  get_all_folds
+  <- 100%  cache_folds < internal_render < perf.lua:7
+ 0%  is_directive
+  <- 100%  fn < match_preds < (for generator) < fn < for_each_tree < get_buffer_highlights < extract_highlights < internal_render < perf.lua:7
+ 0%  is_white_space
+  <- 100%  str_to_visible_codepoints < gen < internal_render < perf.lua:7
